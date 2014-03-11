@@ -1,4 +1,15 @@
     (function() {
+        var addEvent = function(target, event, func) {
+            if(target.addEventListener) {
+                target.addEventListener(event, func, false);
+            } else if(target.attachEvent) {
+                event = 'on'+event;
+                target.attachEvent(event, func);
+            } else {
+                return false;
+            }
+    	};
+    	
         var insertParamInQueryString = function (key, value)
         {
             key = encodeURIComponent(key); value = encodeURIComponent(value);
@@ -18,15 +29,25 @@
             }
             //this will reload the page, it's likely better to store this until finished
             document.location.search = kvp.join('&');
-        }
-        $('#{{grid.filterFormName}}_form').submit(function(e) {
-            e.preventDefault();
-            value = $('#{{grid.filterFormName}}').val();
+        };
+        
+        addEvent(document.getElementById('{{grid.filterFormName}}_form'), 'submit', function(e) {
+            e = e || window.event;
+            
+            if(e.preventDefault) e.preventDefault();
+            else e.returnValue = false;
+            
+            value = document.getElementById('{{grid.filterFormName}}').value;
             insertParamInQueryString('{{grid.filterFormName}}',value);
         });
-        $('#{{grid.filterFormName}}_reset_button').click(function(e) {
-            e.preventDefault();
+        
+        addEvent(document.getElementById('{{grid.filterFormName}}_reset_button'), 'click', function(e) {
+            e = e || window.event;
+            
+            if(e.preventDefault) e.preventDefault();
+            else e.returnValue = false;
+            
             insertParamInQueryString('{{grid.filterFormName}}',"");
         });
-
+        
     })();
